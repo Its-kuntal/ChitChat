@@ -1,0 +1,465 @@
+<%- include('partials/header') %>
+
+<!-- Mobile menu toggle -->
+<div id="mobile-menu-toggle" class="lg:hidden fixed top-4 left-4 z-50">
+  <button class="p-2 rounded-lg bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-slate-700">
+    <svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+    </svg>
+  </button>
+</div>
+
+<div class="flex h-dvh antialiased text-gray-800 dark:text-gray-200 bg-gray-50 dark:bg-slate-900">
+  <!-- Sidebar -->
+  <div id="sidebar" class="fixed lg:relative inset-y-0 left-0 z-40 w-80 lg:w-80 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col">
+    <!-- Header -->
+    <div class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700">
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white shadow-lg">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200">ChitChat</h1>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Real-time messaging</p>
+        </div>
+      </div>
+      <button id="theme-toggle-btn" class="p-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Toggle theme">
+        <svg id="theme-icon-sun" class="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+        <svg id="theme-icon-moon" class="w-5 h-5 hidden text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- User Profile -->
+    <div class="p-6 border-b border-gray-200 dark:border-slate-700">
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg animate-pulse">
+            <%= currentUser.username.charAt(0).toUpperCase() %>
+          </div>
+          <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full animate-ping"></div>
+          <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate"><%= currentUser.username %></p>
+          <p class="text-xs text-green-500 font-medium flex items-center">
+            <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
+            Online
+          </p>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="hidden lg:flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span>Connected</span>
+          </div>
+          <form action="/logout" method="POST">
+            <button type="submit" class="p-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 transform hover:scale-105" aria-label="Logout">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex-1 overflow-y-auto p-6 space-y-6">
+      <!-- Rooms Section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Rooms</h2>
+            <div class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse" title="Active rooms"></div>
+          </div>
+          <button id="create-room-btn" class="p-1.5 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 transform hover:scale-110" aria-label="Create room">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+            </svg>
+          </button>
+        </div>
+        <div id="room-list" class="space-y-1">
+          <!-- Rooms will be populated here -->
+        </div>
+        <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+          Create rooms to chat with groups
+        </div>
+      </div>
+
+      <!-- Contacts Section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contacts</h2>
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="Recent conversations"></div>
+          </div>
+          <span id="contacts-count" class="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full animate-pulse">0</span>
+        </div>
+        <div id="contacts-list" class="space-y-1">
+          <!-- Contacts will be populated here -->
+        </div>
+        <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+          Your chat history
+        </div>
+      </div>
+
+      <!-- Online Users Section -->
+      <div>
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Online Users</h2>
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" title="Available to chat"></div>
+          </div>
+          <span id="online-user-count" class="px-2 py-1 text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full animate-pulse">0</span>
+        </div>
+        <div id="user-list" class="space-y-1">
+          <!-- Users will be populated here -->
+        </div>
+        <div class="mt-3 text-xs text-gray-500 dark:text-gray-400 text-center">
+          Start new conversations
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overlay for mobile -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden hidden"></div>
+
+  <!-- Main Chat Area -->
+  <div class="flex-1 flex flex-col lg:ml-0 relative overflow-hidden bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <!-- Desktop Sidebar Toggle Button -->
+    <div class="hidden lg:block fixed top-6 left-6 z-30">
+      <button id="desktop-sidebar-toggle" class="p-2 rounded-lg bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Toggle sidebar">
+        <svg id="sidebar-toggle-icon" class="w-6 h-6 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Chat Header -->
+    <div id="chat-header" class="hidden flex items-center justify-between p-6 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700">
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <div id="header-avatar" class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg shadow-lg">
+          </div>
+          <div id="header-status-indicator" class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white dark:border-slate-800 rounded-full"></div>
+        </div>
+        <div>
+          <h2 id="header-username" class="text-lg font-semibold text-gray-800 dark:text-gray-200"></h2>
+          <p id="header-status" class="text-sm text-gray-500 dark:text-gray-400"></p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="room-management-btn" class="hidden p-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Room management">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </button>
+        <button id="add-member-btn" class="hidden p-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Add member">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Welcome Message (shown when no chat is selected) -->
+    <div id="welcome-message" class="absolute inset-0 flex items-center justify-center px-4 sm:px-6">
+      <div class="text-center max-w-lg mx-auto px-6">
+        <div class="mb-8">
+          <div class="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-xl">
+            <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path>
+            </svg>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-3">Welcome to ChitChat! 🎉</h2>
+          <p class="text-gray-600 dark:text-gray-300 text-lg leading-relaxed mb-2">
+            Your real-time messaging experience awaits
+          </p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Connect with friends, join communities, and start conversations instantly
+          </p>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+          <button id="quick-create-room" class="group p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-lg transition-all duration-200">
+            <div class="flex flex-col items-center space-y-2">
+              <div class="w-10 h-10 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center group-hover:bg-indigo-200 dark:group-hover:bg-indigo-900/50 transition-colors duration-200">
+                <svg class="w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Create Room</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Start a group chat</span>
+            </div>
+          </button>
+
+          <button id="quick-start-chat" class="group p-4 bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-green-300 dark:hover:border-green-600 hover:shadow-lg transition-all duration-200">
+            <div class="flex flex-col items-center space-y-2">
+              <div class="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center group-hover:bg-green-200 dark:group-hover:bg-green-900/50 transition-colors duration-200">
+                <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path>
+                </svg>
+              </div>
+              <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Start Chat</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">Private conversation</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Features Preview -->
+        <div class="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-slate-700">
+          <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">✨ What you can do</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 rounded-full bg-indigo-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Real-time Messaging</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Instant message delivery</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Group Rooms</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Create and manage communities</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 rounded-full bg-purple-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Private Chats</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Secure one-on-one conversations</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <div class="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+              <div>
+                <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark Mode</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Easy on the eyes</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div id="chat-container" class="hidden flex-1 flex flex-col bg-transparent">
+      <!-- Scrollable Messages Area -->
+      <div class="flex-1 overflow-y-auto custom-scrollbar messages-scroll-area">
+        <div class="p-6">
+          <div id="chat-messages" class="space-y-4 max-w-4xl mx-auto">
+            <!-- Messages will be populated here -->
+          </div>
+          <div id="loading-messages" class="hidden flex flex-col items-center justify-center py-8">
+            <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-200 border-t-indigo-600 mb-4"></div>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Loading messages...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Typing Indicator -->
+      <div id="typing-indicator" class="px-6 py-2 text-sm text-gray-500 dark:text-gray-400 italic bg-transparent border-t-0 flex-shrink-0"></div>
+
+      <!-- Fixed Message Input Bar -->
+      <div id="message-input-bar" class="hidden p-6 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 flex-shrink-0">
+        <div class="max-w-4xl mx-auto">
+          <div class="flex items-end space-x-4">
+            <div class="flex-1">
+              <div class="relative">
+                <textarea
+                  id="message-input"
+                  rows="1"
+                  class="w-full px-4 py-3 pr-16 border border-gray-300 dark:border-slate-600 rounded-xl bg-gray-50 dark:bg-slate-700 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white dark:focus:bg-slate-600 resize-none transition-all duration-200"
+                  placeholder="Type your message... (Press Enter to send, Shift+Enter for new line)"
+                  aria-label="Message input"
+                ></textarea>
+                <div class="absolute right-3 bottom-3 flex items-center space-x-2">
+                  <button
+                    id="send-btn"
+                    class="p-2 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95 shadow-lg"
+                    aria-label="Send message"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="flex items-center justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+                <span>Press <kbd class="px-1 py-0.5 bg-gray-200 dark:bg-slate-600 rounded text-xs">Enter</kbd> to send, <kbd class="px-1 py-0.5 bg-gray-200 dark:bg-slate-600 rounded text-xs">Shift+Enter</kbd> for new line</span>
+                <span id="message-char-count" class="hidden">0/1000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="current-user-id" value="<%= currentUser._id %>">
+<input type="hidden" id="current-user-username" value="<%= currentUser.username %>">
+
+<!-- Create Room Modal -->
+<div id="create-room-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="create-room-title">
+  <div class="relative mx-auto p-6 w-full max-w-md">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 id="create-room-title" class="text-xl font-semibold text-gray-900 dark:text-gray-100">Create New Room</h3>
+          <button id="close-modal-btn" class="p-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-500 dark:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Close modal">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <form id="create-room-form" class="space-y-4">
+          <div>
+            <label for="room-name-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Room Name</label>
+            <input 
+              id="room-name-input" 
+              type="text" 
+              class="w-full px-4 py-3 border border-gray-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200" 
+              placeholder="Enter room name" 
+              required 
+              aria-describedby="room-error"
+            />
+            <p id="room-error" class="text-red-500 text-sm mt-2 h-4" role="alert" aria-live="polite"></p>
+          </div>
+          
+          <div class="flex space-x-3 pt-4">
+            <button 
+              id="create-room-submit" 
+              type="submit" 
+              class="flex-1 px-4 py-3 bg-indigo-500 hover:bg-indigo-600 text-white font-medium rounded-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Create Room
+            </button>
+            <button 
+              id="close-modal-btn-2" 
+              type="button" 
+              class="flex-1 px-4 py-3 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Member Modal -->
+<div id="add-member-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="add-member-title">
+  <div class="relative mx-auto p-6 w-full max-w-md">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 id="add-member-title" class="text-xl font-semibold text-gray-900 dark:text-gray-100">Add Members</h3>
+          <button id="close-add-member-modal-btn" class="p-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-500 dark:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Close modal">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="space-y-4">
+          <div id="add-member-user-list" class="max-h-64 overflow-y-auto space-y-2">
+            <!-- Users will be populated here -->
+          </div>
+          
+          <div class="pt-4">
+            <button 
+              id="close-add-member-modal-btn-2" 
+              class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 font-medium rounded-xl transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Room Management Modal -->
+<div id="room-management-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="room-management-title">
+  <div class="relative mx-auto p-6 w-full max-w-lg">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h3 id="room-management-title" class="text-xl font-semibold text-gray-900 dark:text-gray-100">Room Management</h3>
+          <button id="close-room-management-modal-btn" class="p-2 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-500 dark:text-gray-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" aria-label="Close modal">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Room Members Section -->
+        <div class="mb-6">
+          <h4 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Room Members</h4>
+          <div id="room-members-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar">
+            <!-- Members will be populated here -->
+          </div>
+        </div>
+
+        <!-- Room Actions -->
+        <div class="border-t border-gray-200 dark:border-slate-700 pt-4">
+          <div class="flex space-x-3">
+            <button id="delete-room-btn" class="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors duration-200 font-medium flex items-center justify-center space-x-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+              </svg>
+              <span>Delete Room</span>
+            </button>
+            <button id="cancel-room-management-btn" class="flex-1 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors duration-200 font-medium">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Room Confirmation Modal -->
+<div id="delete-room-confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50" role="dialog" aria-modal="true" aria-labelledby="delete-room-confirmation-title">
+  <div class="relative mx-auto p-6 w-full max-w-md">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-700">
+      <div class="p-6">
+        <div class="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 dark:bg-red-900/30 rounded-full">
+          <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+          </svg>
+        </div>
+        <h3 id="delete-room-confirmation-title" class="text-lg font-bold text-gray-800 dark:text-gray-200 text-center mb-2">Delete Room</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-center mb-6">Are you sure you want to delete this room? This action cannot be undone and all messages will be lost.</p>
+        <div class="flex space-x-3">
+          <button id="cancel-delete-room-btn" class="flex-1 px-4 py-3 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors duration-200 font-medium">
+            Cancel
+          </button>
+          <button id="confirm-delete-room-btn" class="flex-1 px-4 py-3 bg-red-500 hover:bg-red-600 text-white rounded-xl transition-colors duration-200 font-medium">
+            Delete Room
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/main-simple.js"></script>
+
+</body>
+</html>
