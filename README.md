@@ -124,7 +124,11 @@ This app allows users to chat in **public rooms**, **private messages**, and **g
 ## 🖼️ Screenshots / Demo
 
 
-<img width="1912" height="878" alt="image" src="https://github.com/user-attachments/assets/a4f5418e-c700-4786-8644-205079ea3b15" /><img width="1476" height="874" alt="image" src="https://github.com/user-attachments/assets/54d8138d-9a99-438e-83e8-725062a3d40d" />
+<img width="1912" height="878" alt="image" src="https://github.com/user-attachments/assets/a4f5418e-c700-4786-8644-205079ea3b15" />
+
+
+<img width="1890" height="876" alt="image" src="https://github.com/user-attachments/assets/3b79f36b-243f-4678-ba07-b305f1fc361b" />
+
 
 
 
